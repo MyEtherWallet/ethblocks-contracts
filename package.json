@@ -1,0 +1,33 @@
+{
+  "name": "ethblocks-contracts",
+  "version": "0.1.0",
+  "description": "ethblocks-contracts",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "compile": "truffle compile",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MyEtherWallet/ethblocks-contracts.git"
+  },
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "ethblocks"
+  ],
+  "author": "kvhnuke",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MyEtherWallet/ethblocks-contracts/issues"
+  },
+  "homepage": "https://github.com/MyEtherWallet/ethblocks-contracts#readme",
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.3.2",
+    "truffle": "^5.4.13"
+  },
+  "dependencies": {}
+}
