@@ -17,11 +17,13 @@ How to Sign and Verify
 
 contract VerifySignature {
     function getMessageHash(
+        address _to,
         uint256 _blockNumber,
         uint256 _tokenId,
         string memory _ipfsHash
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_blockNumber, _tokenId, _ipfsHash));
+        return
+            keccak256(abi.encodePacked(_to, _blockNumber, _tokenId, _ipfsHash));
     }
 
     function getEthSignedMessageHash(bytes32 _messageHash)
@@ -43,13 +45,19 @@ contract VerifySignature {
     }
 
     function verifySig(
+        address _to,
         uint256 _blockNumber,
         uint256 _tokenId,
         string memory _ipfsHash,
         address _signer,
         bytes memory signature
     ) public pure returns (bool) {
-        bytes32 messageHash = getMessageHash(_blockNumber, _tokenId, _ipfsHash);
+        bytes32 messageHash = getMessageHash(
+            _to,
+            _blockNumber,
+            _tokenId,
+            _ipfsHash
+        );
         bytes32 ethSignedMessageHash = getEthSignedMessageHash(messageHash);
 
         return recoverSigner(ethSignedMessageHash, signature) == _signer;

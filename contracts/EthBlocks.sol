@@ -43,7 +43,14 @@ contract Creature is ERC721Tradable, VerifySignature {
         bytes memory _signature
     ) public onlyOwner {
         require(
-            verifySig(_blockNumber, _tokenId, _ipfsHash, signer, _signature),
+            verifySig(
+                _to,
+                _blockNumber,
+                _tokenId,
+                _ipfsHash,
+                signer,
+                _signature
+            ),
             "EthBlocks: Not a valid signature"
         );
         _safeMint(_to, _tokenId);
