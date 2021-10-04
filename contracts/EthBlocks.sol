@@ -41,7 +41,7 @@ contract Creature is ERC721Tradable, VerifySignature {
         uint256 _tokenId,
         string memory _ipfsHash,
         bytes memory _signature
-    ) public onlyOwner {
+    ) public {
         require(
             verifySig(
                 _to,
