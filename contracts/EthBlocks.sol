@@ -9,14 +9,19 @@ import "./Signature.sol";
  * @title Eth Blocks
  * ETHB - a contract for creating Ethereum block NFTs
  */
-contract Creature is ERC721Tradable, VerifySignature {
-    address signer;
+contract EthBlocks is ERC721Tradable, VerifySignature {
+    address public signer;
+    address payable public beneficiary;
     mapping(uint256 => uint256) public blockHashes;
+    using SafeMath for uint256;
 
-    constructor(address _proxyRegistryAddress, address _signer)
-        ERC721Tradable("Eth Blocks", "ETHB", _proxyRegistryAddress)
-    {
+    constructor(
+        address _proxyRegistryAddress,
+        address _signer,
+        address payable _beneficiary
+    ) ERC721Tradable("Eth Blocks", "ETHB", _proxyRegistryAddress) {
         signer = _signer;
+        beneficiary = _beneficiary;
     }
 
     function contractURI() public pure returns (string memory) {
@@ -27,12 +32,17 @@ contract Creature is ERC721Tradable, VerifySignature {
         signer = _newSigner;
     }
 
+    function changeBeneficiary(address payable _beneficiary) public onlyOwner {
+        beneficiary = _beneficiary;
+    }
+
     /**
      * @dev Mints a token to an address with a tokenURI.
      * @param _to address of the future owner of the token
      * @param _blockNumber block number of the block
      * @param _tokenId uint256 of the blockHash
      * @param _ipfsHash ipfsHash of the token URI
+     * @param _price price of the token
      * @param _signature signature of keccak256(abi.encodePacked(_blockNumber, _tokenId, _ipfsHash)) signed by the signer
      */
     function mint(
@@ -40,22 +50,28 @@ contract Creature is ERC721Tradable, VerifySignature {
         uint256 _blockNumber,
         uint256 _tokenId,
         string memory _ipfsHash,
+        uint256 _price,
         bytes memory _signature
-    ) public {
+    ) public payable {
         require(
             verifySig(
                 _to,
                 _blockNumber,
                 _tokenId,
                 _ipfsHash,
+                _price,
                 signer,
                 _signature
             ),
             "EthBlocks: Not a valid signature"
         );
+        require(msg.value >= _price, "EthBlocks: Price is low");
+        uint256 remainder = msg.value.sub(_price);
+        beneficiary.transfer(_price);
         _safeMint(_to, _tokenId);
         _setTokenURI(_tokenId, _ipfsHash);
         blockHashes[_blockNumber] = _tokenId;
+        payable(msg.sender).transfer(remainder);
     }
 
     function hashToTokenId(bytes32 _hash) public pure returns (uint256) {

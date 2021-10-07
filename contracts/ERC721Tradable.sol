@@ -72,7 +72,7 @@ abstract contract ERC721Tradable is
     }
 
     function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://ipfs/";
+        return "ipfs://";
     }
 
     function _beforeTokenTransfer(

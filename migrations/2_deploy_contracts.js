@@ -1,8 +1,16 @@
-const ConvertLib = artifacts.require("ConvertLib");
-const MetaCoin = artifacts.require("MetaCoin");
+const EthBlocks = artifacts.require("EthBlocks");
 
-module.exports = function(deployer) {
-  deployer.deploy(ConvertLib);
-  deployer.link(ConvertLib, MetaCoin);
-  deployer.deploy(MetaCoin);
+module.exports = async (deployer, network, addresses) => {
+  let proxyRegistryAddress = "";
+  if (network === "rinkeby") {
+    proxyRegistryAddress = "0xf57b2c51ded3a29e6891aba85459d600256cf317";
+  } else {
+    proxyRegistryAddress = "0xa5409ec958c83c3f309868babaca7c86dcb077c1";
+  }
+  await deployer.deploy(
+    EthBlocks,
+    proxyRegistryAddress,
+    addresses[1],
+    addresses[2]
+  );
 };
