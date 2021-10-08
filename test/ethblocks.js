@@ -59,6 +59,13 @@ contract("EthBlocks", (accounts) => {
       "0x" + blockHashBN.toString("hex"),
       "0x4d035f21bec3661c24ed8cdef6f3e13a814e434db5574c598d72e8771a64b8cd"
     );
+    const tokenId = await ethblocks.tokenOfOwnerByIndex(accounts[3], 0);
+    assert.equal(await ethblocks.balanceOf(accounts[3]), 1);
+    assert.equal(await ethblocks.balanceOf(accounts[1]), 0);
+    assert.equal(
+      "0x" + tokenId.toString("hex"),
+      "0x4d035f21bec3661c24ed8cdef6f3e13a814e434db5574c598d72e8771a64b8cd"
+    );
   });
   it("Should correctly convert hash to id", async function () {
     const tokenIdBN = await ethblocks.hashToTokenId(
