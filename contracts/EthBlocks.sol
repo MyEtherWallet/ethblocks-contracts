@@ -18,14 +18,16 @@ contract EthBlocks is ERC721Tradable, VerifySignature {
     constructor(
         address _proxyRegistryAddress,
         address _signer,
-        address payable _beneficiary
-    ) ERC721Tradable("Eth Blocks", "ETHB", _proxyRegistryAddress) {
+        address payable _beneficiary,
+        string memory _name,
+        string memory _symbol
+    ) ERC721Tradable(_name, _symbol, _proxyRegistryAddress) {
         signer = _signer;
         beneficiary = _beneficiary;
     }
 
     function contractURI() public pure returns (string memory) {
-        return "https://ethblocks.mewapi.io/contract/meta";
+        return "https://ethblocksdata.mewapi.io/contract/meta";
     }
 
     function changeSigner(address _newSigner) public onlyOwner {

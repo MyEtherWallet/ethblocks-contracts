@@ -11,6 +11,8 @@ module.exports = async (deployer, network, addresses) => {
     EthBlocks,
     proxyRegistryAddress,
     addresses[1],
-    addresses[2]
+    addresses[2],
+    "Eth Blocks",
+    "ETHB"
   );
 };
