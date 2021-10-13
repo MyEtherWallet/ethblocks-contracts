@@ -38,48 +38,16 @@ contract("EthBlocks", (accounts) => {
       "0x" + sigBuffer.toString("hex"),
       { value: "500000000" }
     );
+    assert.equal(await ethblocks.ownerOf(4526542), accounts[3]);
+    assert.equal(await ethblocks.tokenURI(4526542), "ipfs://ipfsHash121212");
+    const blockHash = await ethblocks.blockHashes(4526542);
     assert.equal(
-      await ethblocks.ownerOf(
-        "0x4d035f21bec3661c24ed8cdef6f3e13a814e434db5574c598d72e8771a64b8cd"
-      ),
-      accounts[3]
-    );
-    assert.equal(
-      await ethblocks.tokenURI(
-        "0x4d035f21bec3661c24ed8cdef6f3e13a814e434db5574c598d72e8771a64b8cd"
-      ),
-      "ipfs://ipfsHash121212"
-    );
-    const blockHashBN = await ethblocks.blockHashes(4526542);
-    assert.equal(
-      "0x" + blockHashBN.toString("hex"),
-      "0x4d035f21bec3661c24ed8cdef6f3e13a814e434db5574c598d72e8771a64b8cd"
-    );
-    assert.equal(
-      "0x" + blockHashBN.toString("hex"),
+      blockHash,
       "0x4d035f21bec3661c24ed8cdef6f3e13a814e434db5574c598d72e8771a64b8cd"
     );
     const tokenId = await ethblocks.tokenOfOwnerByIndex(accounts[3], 0);
     assert.equal(await ethblocks.balanceOf(accounts[3]), 1);
     assert.equal(await ethblocks.balanceOf(accounts[1]), 0);
-    assert.equal(
-      "0x" + tokenId.toString("hex"),
-      "0x4d035f21bec3661c24ed8cdef6f3e13a814e434db5574c598d72e8771a64b8cd"
-    );
-  });
-  it("Should correctly convert hash to id", async function () {
-    const tokenIdBN = await ethblocks.hashToTokenId(
-      "0xdd166b46de2a5df9153e0d107383e3b670f8e32488f35073e29acc64ad4eb780"
-    );
-    assert.equal(
-      tokenIdBN.toString(),
-      "100000750569779127133654391210248331194789449127784754681573510034235543435136"
-    );
-    assert.equal(
-      await ethblocks.tokenIdToHash(
-        "100000750569779127133654391210248331194789449127784754681573510034235543435136"
-      ),
-      "0xdd166b46de2a5df9153e0d107383e3b670f8e32488f35073e29acc64ad4eb780"
-    );
+    assert.equal(tokenId.toString(), 4526542);
   });
 });

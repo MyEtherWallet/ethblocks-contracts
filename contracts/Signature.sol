@@ -20,20 +20,26 @@ contract VerifySignature {
     function getMessageHash(
         address _to,
         uint256 _blockNumber,
-        uint256 _tokenId,
+        bytes32 _blockHash,
         string memory _ipfsHash,
         uint256 _price
     ) public pure returns (bytes32) {
         return
             keccak256(
-                abi.encodePacked(_to, _blockNumber, _tokenId, _ipfsHash, _price)
+                abi.encodePacked(
+                    _to,
+                    _blockNumber,
+                    _blockHash,
+                    _ipfsHash,
+                    _price
+                )
             );
     }
 
     function verifySig(
         address _to,
         uint256 _blockNumber,
-        uint256 _tokenId,
+        bytes32 _blockHash,
         string memory _ipfsHash,
         uint256 _price,
         address _signer,
@@ -42,7 +48,7 @@ contract VerifySignature {
         bytes32 messageHash = getMessageHash(
             _to,
             _blockNumber,
-            _tokenId,
+            _blockHash,
             _ipfsHash,
             _price
         );

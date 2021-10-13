@@ -12,7 +12,7 @@ import "./Signature.sol";
 contract EthBlocks is ERC721Tradable, VerifySignature {
     address public signer;
     address payable public beneficiary;
-    mapping(uint256 => uint256) public blockHashes;
+    mapping(uint256 => bytes32) public blockHashes;
     using SafeMath for uint256;
 
     constructor(
@@ -40,7 +40,7 @@ contract EthBlocks is ERC721Tradable, VerifySignature {
      * @dev Mints a token to an address with a tokenURI.
      * @param _to address of the future owner of the token
      * @param _blockNumber block number of the block
-     * @param _tokenId uint256 of the blockHash
+     * @param _blockHash bytes32 of the blockHash
      * @param _ipfsHash ipfsHash of the token URI
      * @param _price price of the token
      * @param _signature signature of keccak256(abi.encodePacked(_blockNumber, _tokenId, _ipfsHash)) signed by the signer
@@ -48,7 +48,7 @@ contract EthBlocks is ERC721Tradable, VerifySignature {
     function mint(
         address _to,
         uint256 _blockNumber,
-        uint256 _tokenId,
+        bytes32 _blockHash,
         string memory _ipfsHash,
         uint256 _price,
         bytes memory _signature
@@ -57,7 +57,7 @@ contract EthBlocks is ERC721Tradable, VerifySignature {
             verifySig(
                 _to,
                 _blockNumber,
-                _tokenId,
+                _blockHash,
                 _ipfsHash,
                 _price,
                 signer,
@@ -68,18 +68,42 @@ contract EthBlocks is ERC721Tradable, VerifySignature {
         require(msg.value >= _price, "EthBlocks: Price is low");
         uint256 remainder = msg.value.sub(_price);
         beneficiary.transfer(_price);
-        _safeMint(_to, _tokenId);
-        _setTokenURI(_tokenId, _ipfsHash);
-        blockHashes[_blockNumber] = _tokenId;
+        _safeMint(_to, _blockNumber);
+        _setTokenURI(_blockNumber, _ipfsHash);
+        blockHashes[_blockNumber] = _blockHash;
         payable(msg.sender).transfer(remainder);
     }
 
-    function hashToTokenId(bytes32 _hash) public pure returns (uint256) {
-        return uint256(_hash);
-    }
-
-    function tokenIdToHash(uint256 _tokenId) public pure returns (bytes32) {
-        return bytes32(_tokenId);
+    function updateToken(
+        address _to,
+        uint256 _blockNumber,
+        bytes32 _blockHash,
+        string memory _ipfsHash,
+        uint256 _price,
+        bytes memory _signature
+    ) public payable {
+        require(
+            verifySig(
+                _to,
+                _blockNumber,
+                _blockHash,
+                _ipfsHash,
+                _price,
+                signer,
+                _signature
+            ),
+            "EthBlocks: Not a valid signature"
+        );
+        require(msg.value >= _price, "EthBlocks: Price is low");
+        require(
+            _isApprovedOrOwner(_msgSender(), _blockNumber),
+            "EthBlocks: update caller is not owner nor approved"
+        );
+        uint256 remainder = msg.value.sub(_price);
+        beneficiary.transfer(_price);
+        _setTokenURI(_blockNumber, _ipfsHash);
+        blockHashes[_blockNumber] = _blockHash;
+        payable(msg.sender).transfer(remainder);
     }
 
     function multicall(bytes[] calldata data)
