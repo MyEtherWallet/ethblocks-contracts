@@ -15,6 +15,12 @@ module.exports = {
       accounts: 5,
       defaultEtherBalance: 500,
       blockTime: 1,
+      provider: function () {
+        return new HDWalletProvider(
+          "toward vacant shaft dry open range skull adapt cram defense doll fatigue",
+          "http://127.0.0.1:8545"
+        );
+      },
     },
     rinkeby: {
       provider: function () {
