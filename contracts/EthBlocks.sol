@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 
 import "./ERC721Tradable.sol";
 import "./Minter.sol";
+import "./@rarible/royalties/contracts/LibPart.sol";
 
 /**
  * @title Eth Blocks
@@ -11,7 +12,8 @@ import "./Minter.sol";
  */
 contract EthBlocks is ERC721Tradable {
     address public signer;
-    address payable public beneficiary;
+    address payable public royaltyAddress;
+    uint96 public royaltyBasisPoints;
     Minter public minter;
     mapping(uint256 => bytes32) public blockHashes;
     using SafeMath for uint256;
@@ -29,9 +31,14 @@ contract EthBlocks is ERC721Tradable {
 
     constructor(
         address _proxyRegistryAddress,
+        address payable _royaltyAddress,
+        uint96 _royaltyBasisPoints,
         string memory _name,
         string memory _symbol
-    ) ERC721Tradable(_name, _symbol, _proxyRegistryAddress) {}
+    ) ERC721Tradable(_name, _symbol, _proxyRegistryAddress) {
+        royaltyAddress = _royaltyAddress;
+        royaltyBasisPoints = _royaltyBasisPoints;
+    }
 
     function contractURI() public pure returns (string memory) {
         return "https://ethblocksdata.mewapi.io/contract/meta";
@@ -39,6 +46,17 @@ contract EthBlocks is ERC721Tradable {
 
     function changeMinter(Minter _minter) public onlyOwner {
         minter = _minter;
+    }
+
+    function changeRoyaltyAddress(address payable _royaltyAddress)
+        public
+        onlyOwner
+    {
+        royaltyAddress = _royaltyAddress;
+    }
+
+    function changeRoyaltyBasisPoints(uint96 _basisPoints) public onlyOwner {
+        royaltyBasisPoints = _basisPoints;
     }
 
     /**
@@ -58,6 +76,7 @@ contract EthBlocks is ERC721Tradable {
         _safeMint(_to, _blockNumber);
         _setTokenURI(_blockNumber, _ipfsHash);
         blockHashes[_blockNumber] = _blockHash;
+        emit RoyaltiesSet(_blockNumber, getRaribleV2Royalties(_blockNumber));
     }
 
     /**
@@ -74,6 +93,44 @@ contract EthBlocks is ERC721Tradable {
     ) external onlyMinter {
         _setTokenURI(_blockNumber, _ipfsHash);
         blockHashes[_blockNumber] = _blockHash;
+    }
+
+    /**
+     * @dev Rarible Royalties.
+     * @param //_blockNumber token id
+     */
+
+    function getRaribleV2Royalties(
+        uint256 /*_blockNumber*/
+    ) public view override returns (LibPart.Part[] memory) {
+        return _getRoyalties();
+    }
+
+    /**
+     * @dev ERC2981 for mintable.
+     * @param //_blockNumber block number of the block
+     * @param _salePrice sale price of NFT
+     */
+
+    function royaltyInfo(
+        uint256, /*_blockNumber*/
+        uint256 _salePrice
+    ) external view returns (address receiver, uint256 royaltyAmount) {
+        LibPart.Part[] memory _royalties = _getRoyalties();
+        if (_royalties.length > 0) {
+            return (
+                _royalties[0].account,
+                (_salePrice * _royalties[0].value) / 10000
+            );
+        }
+        return (address(0), 0);
+    }
+
+    function _getRoyalties() internal view returns (LibPart.Part[] memory) {
+        LibPart.Part[] memory _royalties = new LibPart.Part[](1);
+        _royalties[0].value = royaltyBasisPoints;
+        _royalties[0].account = royaltyAddress;
+        return _royalties;
     }
 
     function multicall(bytes[] calldata data)

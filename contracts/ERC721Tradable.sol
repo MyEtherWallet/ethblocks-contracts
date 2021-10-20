@@ -12,6 +12,9 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "./common/meta-transactions/ContentMixin.sol";
 import "./common/meta-transactions/NativeMetaTransaction.sol";
 
+import "./@rarible/royalties/contracts/LibRoyaltiesV2.sol";
+import "./@rarible/royalties/contracts/RoyaltiesV2.sol";
+
 contract OwnableDelegateProxy {}
 
 contract ProxyRegistry {
@@ -28,11 +31,13 @@ abstract contract ERC721Tradable is
     ERC721Enumerable,
     ERC721URIStorage,
     NativeMetaTransaction,
-    Ownable
+    Ownable,
+    RoyaltiesV2
 {
     using SafeMath for uint256;
 
     address proxyRegistryAddress;
+    bytes4 private constant _INTERFACE_ID_ERC2981 = 0x2a55205a;
 
     constructor(
         string memory _name,
@@ -105,6 +110,12 @@ abstract contract ERC721Tradable is
         override(ERC721, ERC721Enumerable)
         returns (bool)
     {
+        if (interfaceId == LibRoyaltiesV2._INTERFACE_ID_ROYALTIES) {
+            return true;
+        }
+        if (interfaceId == _INTERFACE_ID_ERC2981) {
+            return true;
+        }
         return super.supportsInterface(interfaceId);
     }
 }

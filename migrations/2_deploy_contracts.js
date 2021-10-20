@@ -8,7 +8,14 @@ module.exports = async (deployer, network, addresses) => {
     proxyRegistryAddress = "0xa5409ec958c83c3f309868babaca7c86dcb077c1";
   }
   await deployer
-    .deploy(EthBlocks, proxyRegistryAddress, "Eth Blocks", "ETHB")
+    .deploy(
+      EthBlocks,
+      proxyRegistryAddress,
+      addresses[2],
+      250,
+      "Eth Blocks",
+      "ETHB"
+    )
     .then(() => {
       return deployer
         .deploy(Minter, addresses[1], addresses[2], EthBlocks.address)

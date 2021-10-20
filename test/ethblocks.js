@@ -71,4 +71,17 @@ contract("EthBlocks", (accounts) => {
       );
     }
   });
+  it("Should return correct royalties", async function () {
+    const royalties = await ethblocks.getRaribleV2Royalties(0);
+    assert.equal(royalties[0].account, accounts[2]);
+    assert.equal(royalties[0].value, 250);
+    let mintableRoyalty = await ethblocks.royaltyInfo(0, 20000);
+    assert.equal(mintableRoyalty.receiver, accounts[2]);
+    assert.equal(mintableRoyalty.royaltyAmount.toNumber(), 500);
+    await ethblocks.changeRoyaltyAddress(accounts[3]);
+    await ethblocks.changeRoyaltyBasisPoints(1000);
+    mintableRoyalty = await ethblocks.royaltyInfo(0, 20000);
+    assert.equal(mintableRoyalty.receiver, accounts[3]);
+    assert.equal(mintableRoyalty.royaltyAmount.toNumber(), 2000);
+  });
 });
