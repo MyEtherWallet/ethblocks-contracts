@@ -76,7 +76,7 @@ contract EthBlocks is ERC721Tradable {
         _safeMint(_to, _blockNumber);
         _setTokenURI(_blockNumber, _ipfsHash);
         blockHashes[_blockNumber] = _blockHash;
-        emit RoyaltiesSet(_blockNumber, getRaribleV2Royalties(_blockNumber));
+        emit RoyaltiesSet(_blockNumber, _getRoyalties());
     }
 
     /**
