@@ -84,4 +84,12 @@ contract("EthBlocks", (accounts) => {
     assert.equal(mintableRoyalty.receiver, accounts[3]);
     assert.equal(mintableRoyalty.royaltyAmount.toNumber(), 2000);
   });
+  it("Should support correct interfaces", async function () {
+    assert.equal(await ethblocks.supportsInterface("0x2a55205a"), true); //ERC2981 mintable
+    assert.equal(await ethblocks.supportsInterface("0x44c74bcc"), true); //Rarible RoyaltiesV2
+    assert.equal(await ethblocks.supportsInterface("0x80ac58cd"), true); //ERC721
+    assert.equal(await ethblocks.supportsInterface("0x5b5e139f"), true); //ERC721Metadata
+    assert.equal(await ethblocks.supportsInterface("0x780e9d63"), true); //ERC721Enumerable
+    assert.equal(await ethblocks.supportsInterface("0x01ffc9a7"), true); //ERC165
+  });
 });
