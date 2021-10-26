@@ -11,12 +11,12 @@ import "./@rarible/royalties/contracts/LibPart.sol";
  * ETHB - a contract for creating Ethereum block NFTs
  */
 contract EthBlocks is ERC721Tradable {
-    address public signer;
     address payable public royaltyAddress;
     uint96 public royaltyBasisPoints;
     Minter public minter;
     mapping(uint256 => bytes32) public blockHashes;
     using SafeMath for uint256;
+    event Updated(uint256 tokenId, string url);
 
     /**
      * @dev Throws if called by any account other than the authorized minter.
@@ -93,6 +93,7 @@ contract EthBlocks is ERC721Tradable {
     ) external onlyMinter {
         _setTokenURI(_blockNumber, _ipfsHash);
         blockHashes[_blockNumber] = _blockHash;
+        emit Updated(_blockNumber, tokenURI(_blockNumber));
     }
 
     /**

@@ -7,9 +7,10 @@ contract("EthBlocks", (accounts) => {
     ethblocks = await EthBlocks.deployed();
     minter = await Minter.deployed();
   });
-  it("Should return the symbol,name and correct minter and ethblocks", async function () {
+  it("Should return the symbol,name, baseURI and correct minter and ethblocks", async function () {
     assert.equal(await ethblocks.name(), "Eth Blocks");
     assert.equal(await ethblocks.symbol(), "ETHB");
+    assert.equal(await ethblocks.baseTokenURI(), "ipfs://");
     assert.equal(await minter.ethBlock(), EthBlocks.address);
     assert.equal(await ethblocks.minter(), Minter.address);
   });
@@ -86,7 +87,7 @@ contract("EthBlocks", (accounts) => {
   });
   it("Should support correct interfaces", async function () {
     assert.equal(await ethblocks.supportsInterface("0x2a55205a"), true); //ERC2981 mintable
-    assert.equal(await ethblocks.supportsInterface("0x44c74bcc"), true); //Rarible RoyaltiesV2
+    assert.equal(await ethblocks.supportsInterface("0xcad96cca"), true); //Rarible RoyaltiesV2
     assert.equal(await ethblocks.supportsInterface("0x80ac58cd"), true); //ERC721
     assert.equal(await ethblocks.supportsInterface("0x5b5e139f"), true); //ERC721Metadata
     assert.equal(await ethblocks.supportsInterface("0x780e9d63"), true); //ERC721Enumerable
