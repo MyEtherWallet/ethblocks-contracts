@@ -134,6 +134,19 @@ contract EthBlocks is ERC721Tradable {
         return _royalties;
     }
 
+    function getOwnersAllTokens(address _owner)
+        public
+        view
+        returns (uint256[] memory)
+    {
+        uint256 balance = balanceOf(_owner);
+        uint256[] memory tokens = new uint256[](balance);
+        for (uint256 i = 0; i < balance; i++) {
+            tokens[i] = tokenOfOwnerByIndex(_owner, i);
+        }
+        return tokens;
+    }
+
     function multicall(bytes[] calldata data)
         external
         returns (bytes[] memory results)

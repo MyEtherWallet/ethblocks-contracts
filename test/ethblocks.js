@@ -54,6 +54,8 @@ contract("EthBlocks", (accounts) => {
     assert.equal(await ethblocks.balanceOf(accounts[3]), 1);
     assert.equal(await ethblocks.balanceOf(accounts[1]), 0);
     assert.equal(tokenId.toString(), 4526542);
+    const allTokens = await ethblocks.getOwnersAllTokens(accounts[3]);
+    assert.equal(allTokens[0].toNumber(), 4526542);
   });
   it("should fail", async function () {
     try {
