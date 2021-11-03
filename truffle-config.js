@@ -8,6 +8,10 @@ module.exports = {
       version: "0.8.9",
     },
   },
+  plugins: ["truffle-plugin-verify"],
+  api_keys: {
+    etherscan: "",
+  },
   networks: {
     develop: {
       port: 8545,

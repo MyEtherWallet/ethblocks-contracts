@@ -30,7 +30,8 @@
   "devDependencies": {
     "@openzeppelin/contracts": "^4.3.2",
     "ethereumjs-util": "^7.1.2",
-    "truffle": "^5.4.13"
+    "truffle": "^5.4.13",
+    "truffle-plugin-verify": "^0.5.16"
   },
   "dependencies": {}
 }
