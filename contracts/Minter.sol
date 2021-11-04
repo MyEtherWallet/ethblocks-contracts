@@ -39,6 +39,14 @@ contract Minter is Ownable, VerifySignature {
         ethBlock = _ethBlock;
     }
 
+    function getChainID() public view returns (uint256) {
+        uint256 id;
+        assembly {
+            id := chainid()
+        }
+        return id;
+    }
+
     /**
      * @dev Mints a token to an address with a tokenURI.
      * @param _to address of the future owner of the token
@@ -63,6 +71,7 @@ contract Minter is Ownable, VerifySignature {
                 _blockHash,
                 _ipfsHash,
                 _price,
+                getChainID(),
                 signer,
                 _signature
             ),
@@ -90,6 +99,7 @@ contract Minter is Ownable, VerifySignature {
                 _blockHash,
                 _ipfsHash,
                 _price,
+                getChainID(),
                 signer,
                 _signature
             ),

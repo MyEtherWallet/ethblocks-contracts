@@ -22,7 +22,8 @@ contract VerifySignature {
         uint256 _blockNumber,
         bytes32 _blockHash,
         string memory _ipfsHash,
-        uint256 _price
+        uint256 _price,
+        uint256 _chainId
     ) public pure returns (bytes32) {
         return
             keccak256(
@@ -31,7 +32,8 @@ contract VerifySignature {
                     _blockNumber,
                     _blockHash,
                     _ipfsHash,
-                    _price
+                    _price,
+                    _chainId
                 )
             );
     }
@@ -42,6 +44,7 @@ contract VerifySignature {
         bytes32 _blockHash,
         string memory _ipfsHash,
         uint256 _price,
+        uint256 _chainId,
         address _signer,
         bytes memory signature
     ) public pure returns (bool) {
@@ -50,7 +53,8 @@ contract VerifySignature {
             _blockNumber,
             _blockHash,
             _ipfsHash,
-            _price
+            _price,
+            _chainId
         );
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(
             messageHash

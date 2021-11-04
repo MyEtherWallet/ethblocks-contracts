@@ -20,16 +20,19 @@ contract("EthBlocks", (accounts) => {
     assert.equal(await minter.beneficiary(), accounts[2]);
   });
   it("Should generate correct hash, and mint and correct owner", async function () {
+    const chainId = await minter.getChainID();
+    assert.equal(chainId.toNumber(), 1337);
     const hash = await minter.getMessageHash(
       accounts[3],
       4526542,
       "0x4d035f21bec3661c24ed8cdef6f3e13a814e434db5574c598d72e8771a64b8cd",
       "ipfsHash121212",
-      "500000000"
+      "500000000",
+      1337
     );
     assert.equal(
       hash,
-      "0x378bd1aa0d01e576d47080d942fb1f004ff4f53a8c383c4f67ab2cc7599850d7"
+      "0xdb318ac5113a34a55abd423016f98bb13edce8360d3a5405c77e87d26efa8145"
     );
     const signature = await web3.eth.sign(hash, accounts[1]);
     const sigBuffer = Buffer.from(signature.replace("0x", ""), "hex");
