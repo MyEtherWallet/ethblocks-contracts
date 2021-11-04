@@ -20,8 +20,6 @@ contract("EthBlocks", (accounts) => {
     assert.equal(await minter.beneficiary(), accounts[2]);
   });
   it("Should generate correct hash, and mint and correct owner", async function () {
-    const chainId = await minter.getChainID();
-    assert.equal(chainId.toNumber(), 1337);
     const hash = await minter.getMessageHash(
       accounts[3],
       4526542,

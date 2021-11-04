@@ -39,7 +39,7 @@ contract Minter is Ownable, VerifySignature {
         ethBlock = _ethBlock;
     }
 
-    function getChainID() public view returns (uint256) {
+    function getChainID() internal view returns (uint256) {
         uint256 id;
         assembly {
             id := chainid()

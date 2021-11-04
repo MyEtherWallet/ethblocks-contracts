@@ -47,7 +47,7 @@ contract VerifySignature {
         uint256 _chainId,
         address _signer,
         bytes memory signature
-    ) public pure returns (bool) {
+    ) internal pure returns (bool) {
         bytes32 messageHash = getMessageHash(
             _to,
             _blockNumber,
