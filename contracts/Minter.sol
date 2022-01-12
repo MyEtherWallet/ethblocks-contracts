@@ -118,6 +118,7 @@ contract Minter is Ownable, VerifySignature {
 
     function multicall(bytes[] calldata data)
         external
+        payable
         returns (bytes[] memory results)
     {
         results = new bytes[](data.length);
