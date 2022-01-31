@@ -96,4 +96,38 @@ contract("EthBlocks", (accounts) => {
     assert.equal(await ethblocks.supportsInterface("0x780e9d63"), true); //ERC721Enumerable
     assert.equal(await ethblocks.supportsInterface("0x01ffc9a7"), true); //ERC165
   });
+  it("multicall should work for minting", async function () {
+    const getMintABI = async (blockNumber) => {
+      const hash = await minter.getMessageHash(
+        accounts[3],
+        blockNumber,
+        "0x4d035f21bec3661c24ed8cdef6f3e13a814e434db5574c598d72e8771a64b8cd",
+        "ipfsHash121212",
+        "500000000",
+        1337
+      );
+      const signature = await web3.eth.sign(hash, accounts[1]);
+      const sigBuffer = Buffer.from(signature.replace("0x", ""), "hex");
+      sigBuffer[sigBuffer.length - 1] = sigBuffer[sigBuffer.length - 1] + 27;
+      return minter.contract.methods
+        .mint(
+          accounts[3],
+          blockNumber,
+          "0x4d035f21bec3661c24ed8cdef6f3e13a814e434db5574c598d72e8771a64b8cd",
+          "ipfsHash121212",
+          "500000000",
+          "0x" + sigBuffer.toString("hex")
+        )
+        .encodeABI();
+    };
+    const abiArr = await Promise.all([
+      getMintABI(345345),
+      getMintABI(464564),
+      getMintABI(67575),
+    ]);
+    await minter.multicall(abiArr, { value: "5000000000000000" });
+    assert.equal(await ethblocks.ownerOf(464564), accounts[3]);
+    assert.equal(await ethblocks.ownerOf(345345), accounts[3]);
+    assert.equal(await ethblocks.ownerOf(67575), accounts[3]);
+  });
 });

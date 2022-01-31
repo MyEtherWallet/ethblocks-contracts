@@ -27,6 +27,10 @@ contract Minter is Ownable, VerifySignature {
         ethBlock = _ethblock;
     }
 
+    fallback() external payable {
+        require(msg.sender == address(this));
+    }
+
     function changeSigner(address _newSigner) public onlyOwner {
         signer = _newSigner;
     }
@@ -123,12 +127,13 @@ contract Minter is Ownable, VerifySignature {
     {
         results = new bytes[](data.length);
         for (uint256 i = 0; i < data.length; i++) {
-            (bool success, bytes memory result) = address(this).delegatecall(
-                data[i]
+            (bool success, bytes memory result) = (
+                address(this).call{value: address(this).balance}(data[i])
             );
             require(success);
             results[i] = result;
         }
+        payable(msg.sender).transfer(address(this).balance);
         return results;
     }
 }
