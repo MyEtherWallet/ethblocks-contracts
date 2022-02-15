@@ -27,7 +27,7 @@ contract Minter is Ownable, VerifySignature {
         ethBlock = _ethblock;
     }
 
-    fallback() external payable {
+    receive() external payable {
         require(msg.sender == address(this));
     }
 
